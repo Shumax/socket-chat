@@ -20,6 +20,7 @@
     <ul id="messages"></ul>
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button type='submit'>Send</button>
+      <button id='toggle-btn' >Disconnect</button>
     </form>
     
     <script src="https://cdn.socket.io/4.7.3/socket.io.min.js"></script>
@@ -29,6 +30,7 @@
       const form = document.getElementById('form');
       const input = document.getElementById('input');
       const messages = document.getElementById('messages');
+      const toggleBtn = document.getElementById('toggle-btn')
 
       form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -44,6 +46,22 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
+      // connecting socket 
+      // if you send messages theu will wait to sent if disconnected
+      toggleBtn.addEventListener('click', (e) => {
+        
+        if(socket.connected) {
+          toggleBtn.innerText = 'Connect'
+          socket.disconnect()
+        } else {
+          toggleBtn.innerText = 'Disconnect'
+          socket.connect()
+        }
+
+        return false
+      })
+
     </script>
   </body>
 </html>
