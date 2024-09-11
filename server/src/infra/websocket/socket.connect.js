@@ -35,7 +35,8 @@ export default function socketConnect(server) {
       try {
         const messages = await MessageService.getAllMessagesRoom()
         messages.forEach((message) => {
-          socket.emit('chat message', message.content, message._id)
+          //console.log('message: ' + message)
+          socket.emit('chat message', message.content, message._id, message.username)
         })
       } catch (e) {
         console.log('Error: ' + e)
