@@ -1,3 +1,5 @@
+.env
+mongo_exemple.js
 
 node_modules
 

@@ -13,19 +13,28 @@ interface ClientToServerEvents {
   'chat message': (msg: string, clientOffset: string, username: string, callback?: () => void) => void;
 }
 
+interface MessageBody {
+  msg: string
+  username: string
+}
+
 export default function chat() {
   const [socket, setSocket] = useState<Socket<ServerToClientEvents, ClientToServerEvents> | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messagesBody, setMessagesBody] = useState<MessageBody[]>([]);
   const [input, setInput] = useState<string>('');
   const [connected, setConnected] = useState<boolean>(true);
   const [counter, setCounter] = useState<number>(0);
   
   const router = useRouter();
-  const { username } = router.query; 
-
-  console.log(username)
+  const { username }: any = router.query;
 
   useEffect(() => {
+    // console.log(username)
+    // if(username == undefined) {
+    //   console.log(username)
+    //   //router.push('/');
+    // }
+
     const newSocket: Socket<ServerToClientEvents, ClientToServerEvents> = io('http://localhost:3030', {
       auth: { serverOffset: 0 },
       ackTimeout: 10000,
@@ -34,27 +43,27 @@ export default function chat() {
     setSocket(newSocket);
 
     newSocket.on('chat message', (msg: string, serverOffset: number, username: string) => {
-      setMessages((prevMessages) => [...prevMessages, msg, username]);
+      // console.log(msg, serverOffset, username);
+      setMessagesBody((prevMessages: MessageBody[]) => [...prevMessages, { msg, username }]);
       newSocket.auth = { ...newSocket.auth, serverOffset };
     });
 
     return () => {
       newSocket.close();
     };
-  }, []);
+  }, [username]);
 
-  function handleSubmit (e: FormEvent<HTMLFormElement>) {
-    
-    if (input && socket) {
-      setCounter(counter + 1)
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+  
+    if (input && socket && username) {
+      setCounter(counter + 1);
 
       const clientOffset = `${socket.id}-${counter}`;
-      console.log(clientOffset)
+      
       socket.emit('chat message', input, clientOffset, username);
       setInput('');
     }
-
-    return false
   }
 
   function toggleConnection () {
@@ -71,8 +80,8 @@ export default function chat() {
   return (
     <div>
       <ul id="messages">
-        {messages.map((msg, index) => (
-          <li key={index}>{msg}</li>
+        {messagesBody.map((message, index) => (
+          <li key={index}>{message.username}: {message.msg}</li>
         ))}
       </ul>
       <form id='form' onSubmit={handleSubmit}>
@@ -88,7 +97,6 @@ export default function chat() {
         </button>
       </form>
     </div>
-    
   );
-};
+}
 
