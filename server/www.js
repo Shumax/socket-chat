@@ -16,7 +16,7 @@ const port = process.env.PORT || 3030;
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // express.static('frontend/index.html') 
 
-app.get('/room', (req, res) => { res.sendFile(join(__dirname, '../frontend/index.html')) })
+// app.get('/room', (req, res) => { res.sendFile(join(__dirname, '../frontend/.next')) })
 
 mongooseConnect.then(() => {
   console.log('MongoDB connected')

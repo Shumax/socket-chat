@@ -2,7 +2,12 @@ import { Server } from 'socket.io'
 import MessageService from '../../app/messages.js'
 
 export default function socketConnect(server) {
-  const io = new Server(server)
+  const io = new Server(server, {
+    cors: {
+      origin: '*',
+      methods: ['GET', 'POST']
+    }
+  })
 
   io.on('connection', async (socket) => {
     console.log('a user connected:', socket.id)
