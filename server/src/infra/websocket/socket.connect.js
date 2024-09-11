@@ -26,7 +26,7 @@ export default function socketConnect(server) {
         }
       }
       
-      io.emit('chat message', msg, result._id)
+      io.emit('chat message', msg, result._id, result.username)
       console.log(`Message: ${msg} from username: ${username}`)
       callback()
     })
